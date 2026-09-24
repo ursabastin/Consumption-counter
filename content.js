@@ -97,6 +97,8 @@
       }
     }
     return false;
+  }
+
   // Safe messaging helper to gracefully handle extension updates and invalidated context
   function safeSendMessage(message, callback) {
     if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
@@ -198,7 +200,13 @@
   }
 
   // Periodic 1-second watch loop
-  setInterval(() => {
+  const trackerInterval = setInterval(() => {
+    // Cleanly stop execution if extension was reloaded or disabled
+    if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
+      clearInterval(trackerInterval);
+      return;
+    }
+
     // Check for SPA URL change
     if (location.href !== currentUrl) {
       handleUrlChange(location.href);
@@ -250,7 +258,7 @@
     if (e.target && (e.target.id === 'contenteditable-root' || e.target.closest('#comment-input') || e.target.closest('#commentbox'))) {
       if (!window.__ytcc_comment_tracked) {
         window.__ytcc_comment_tracked = true;
-        chrome.runtime.sendMessage({
+        safeSendMessage({
           type: 'FEATURE_ACTION',
           featureName: 'comment',
           count: 1
@@ -318,7 +326,7 @@
     // Buttons (Dashboard and Minimize only - No cross/remove button)
     document.getElementById('ytcc-btn-dash').addEventListener('click', (e) => {
       e.stopPropagation();
-      chrome.runtime.sendMessage({ type: 'OPEN_DASHBOARD' });
+      safeSendMessage({ type: 'OPEN_DASHBOARD' });
     });
 
     document.getElementById('ytcc-btn-minimize').addEventListener('click', (e) => {
@@ -438,8 +446,7 @@
   }
 
   // Initial load
-  chrome.runtime.sendMessage({ type: 'GET_DATA' }, (res) => {
-    if (chrome.runtime.lastError) return;
+  safeSendMessage({ type: 'GET_DATA' }, (res) => {
     if (res && res.data) {
       cachedTodayStats = res.data.today;
       cachedSettings = { ...cachedSettings, ...(res.data.settings || {}) };
@@ -451,21 +458,23 @@
   });
 
   // Listen for storage changes from popup or options page
-  chrome.storage.onChanged.addListener((changes) => {
-    if (changes.today) {
-      cachedTodayStats = changes.today.newValue;
-      updateHudUI();
-    }
-    if (changes.settings) {
-      cachedSettings = { ...cachedSettings, ...changes.settings.newValue };
-      if (!cachedSettings.showFloatingHud && hudRoot) {
-        hudRoot.style.display = 'none';
-      } else if (cachedSettings.showFloatingHud) {
-        if (!hudRoot) setupHud();
-        hudRoot.style.display = 'block';
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.today) {
+        cachedTodayStats = changes.today.newValue;
+        updateHudUI();
       }
-      updateHudUI();
-    }
-  });
+      if (changes.settings) {
+        cachedSettings = { ...cachedSettings, ...changes.settings.newValue };
+        if (!cachedSettings.showFloatingHud && hudRoot) {
+          hudRoot.style.display = 'none';
+        } else if (cachedSettings.showFloatingHud) {
+          if (!hudRoot) setupHud();
+          hudRoot.style.display = 'block';
+        }
+        updateHudUI();
+      }
+    });
+  }
 
 })();
