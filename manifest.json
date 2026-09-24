@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Consumption Counter & Time Tracker",
-  "version": "1.0.0",
-  "description": "Accurately track, count, and visualize time spent on YouTube videos vs Shorts, browse habits, and feature usage.",
+  "name": "Social Media & Video Consumption Counter",
+  "version": "2.0.0",
+  "description": "Quantify and balance your time across YouTube, Instagram, TikTok, Reddit, X, Discord, WhatsApp, LinkedIn, and more.",
   "permissions": [
     "storage",
     "alarms",
@@ -10,7 +10,23 @@
     "notifications"
   ],
   "host_permissions": [
-    "*://*.youtube.com/*"
+    "*://*.youtube.com/*",
+    "*://*.facebook.com/*",
+    "*://*.instagram.com/*",
+    "*://web.whatsapp.com/*",
+    "*://*.tiktok.com/*",
+    "*://*.wechat.com/*",
+    "*://wx.qq.com/*",
+    "*://web.wechat.com/*",
+    "*://*.linkedin.com/*",
+    "*://web.telegram.org/*",
+    "*://*.telegram.org/*",
+    "*://*.snapchat.com/*",
+    "*://*.reddit.com/*",
+    "*://*.x.com/*",
+    "*://*.twitter.com/*",
+    "*://*.pinterest.com/*",
+    "*://*.discord.com/*"
   ],
   "background": {
     "service_worker": "background.js",
@@ -19,7 +35,23 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*.youtube.com/*"
+        "*://*.youtube.com/*",
+        "*://*.facebook.com/*",
+        "*://*.instagram.com/*",
+        "*://web.whatsapp.com/*",
+        "*://*.tiktok.com/*",
+        "*://*.wechat.com/*",
+        "*://wx.qq.com/*",
+        "*://web.wechat.com/*",
+        "*://*.linkedin.com/*",
+        "*://web.telegram.org/*",
+        "*://*.telegram.org/*",
+        "*://*.snapchat.com/*",
+        "*://*.reddit.com/*",
+        "*://*.x.com/*",
+        "*://*.twitter.com/*",
+        "*://*.pinterest.com/*",
+        "*://*.discord.com/*"
       ],
       "js": [
         "content.js"
@@ -32,7 +64,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "YouTube Consumption Counter",
+    "default_title": "Social Media Consumption Counter",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

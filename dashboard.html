@@ -83,6 +83,26 @@
         </div>
 
         <div class="topbar-right">
+          <!-- Platform Filter Selector -->
+          <div class="platform-filter-wrap">
+            <select id="platform-select-filter" class="platform-dropdown" title="Filter by Platform">
+              <option value="all">🌐 All Platforms (Unified)</option>
+              <option value="youtube">🎬 YouTube</option>
+              <option value="instagram">📸 Instagram</option>
+              <option value="tiktok">⚡ TikTok</option>
+              <option value="reddit">🟠 Reddit</option>
+              <option value="x">🐦 X (Twitter)</option>
+              <option value="discord">💬 Discord</option>
+              <option value="whatsapp">📱 WhatsApp</option>
+              <option value="linkedin">💼 LinkedIn</option>
+              <option value="pinterest">📌 Pinterest</option>
+              <option value="snapchat">👻 Snapchat</option>
+              <option value="facebook">👥 Facebook</option>
+              <option value="telegram">✈️ Telegram</option>
+              <option value="wechat">🟢 WeChat</option>
+            </select>
+          </div>
+
           <!-- Time Range Selector -->
           <div class="time-filter">
             <button class="filter-btn active" data-range="today">Today</button>
@@ -96,10 +116,6 @@
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>Export</span>
             </button>
-            <a href="https://www.youtube.com" target="_blank" class="btn-yt" title="Open YouTube">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              <span>YouTube</span>
-            </a>
           </div>
         </div>
       </header>
@@ -114,7 +130,7 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </div>
             <div class="metric-content">
-              <span class="metric-label">Total Time Spent</span>
+              <span class="metric-label" id="kpi-total-label">Total Time Spent</span>
               <div class="metric-value" id="kpi-total-time">0h 0m</div>
               <span class="metric-hint" id="kpi-total-hint">Active watch time</span>
             </div>
@@ -122,11 +138,11 @@
 
           <!-- Regular Videos -->
           <div class="metric-card video-time-card">
-            <div class="metric-icon-wrap video">
+            <div class="metric-icon-wrap video" id="kpi-card2-icon">
               🎬
             </div>
             <div class="metric-content">
-              <span class="metric-label">Regular Videos</span>
+              <span class="metric-label" id="kpi-video-label">Regular Videos</span>
               <div class="metric-value" id="kpi-video-time">0h 0m</div>
               <span class="metric-hint" id="kpi-video-count">0 videos watched</span>
             </div>
@@ -134,11 +150,11 @@
 
           <!-- Shorts -->
           <div class="metric-card shorts-time-card">
-            <div class="metric-icon-wrap shorts">
+            <div class="metric-icon-wrap shorts" id="kpi-card3-icon">
               ⚡
             </div>
             <div class="metric-content">
-              <span class="metric-label">YouTube Shorts</span>
+              <span class="metric-label" id="kpi-shorts-label">YouTube Shorts</span>
               <div class="metric-value" id="kpi-shorts-time">0h 0m</div>
               <span class="metric-hint" id="kpi-shorts-count">0 shorts watched</span>
             </div>
@@ -150,7 +166,7 @@
               ⚖️
             </div>
             <div class="metric-content">
-              <span class="metric-label">Shorts vs Video Ratio</span>
+              <span class="metric-label" id="kpi-ratio-label">Shorts vs Video Ratio</span>
               <div class="metric-value" id="kpi-ratio-val">0% / 0%</div>
               <span class="metric-hint" id="kpi-ratio-hint">Balanced consumption</span>
             </div>
@@ -160,27 +176,27 @@
         <!-- Secondary Highlights Strip -->
         <div class="sub-metrics-strip">
           <div class="sub-metric">
-            <span class="sub-label">Avg Time / Video</span>
+            <span class="sub-label" id="sub-label-1">Avg Time / Video</span>
             <span class="sub-value" id="sub-avg-video">0m 0s</span>
           </div>
           <div class="sub-metric-divider"></div>
           <div class="sub-metric">
-            <span class="sub-label">Avg Time / Short</span>
+            <span class="sub-label" id="sub-label-2">Avg Time / Short</span>
             <span class="sub-value" id="sub-avg-short">0s</span>
           </div>
           <div class="sub-metric-divider"></div>
           <div class="sub-metric">
-            <span class="sub-label">Shorts Rapid Skips</span>
+            <span class="sub-label" id="sub-label-3">Shorts Rapid Skips</span>
             <span class="sub-value" id="sub-shorts-skipped">0</span>
           </div>
           <div class="sub-metric-divider"></div>
           <div class="sub-metric">
-            <span class="sub-label">Searches Executed</span>
+            <span class="sub-label" id="sub-label-4">Searches Executed</span>
             <span class="sub-value" id="sub-search-count">0</span>
           </div>
           <div class="sub-metric-divider"></div>
           <div class="sub-metric">
-            <span class="sub-label">Feed Browsing Time</span>
+            <span class="sub-label" id="sub-label-5">Feed Browsing Time</span>
             <span class="sub-value" id="sub-browse-time">0m</span>
           </div>
         </div>
@@ -190,12 +206,12 @@
           <div class="chart-card flex-2">
             <div class="chart-header">
               <div class="chart-title-group">
-                <h3>Daily Consumption: Videos vs Shorts</h3>
-                <span class="chart-desc">Watch time distribution across days</span>
+                <h3 id="daily-chart-title">Daily Consumption: Videos vs Shorts</h3>
+                <span class="chart-desc" id="daily-chart-desc">Watch time distribution across days</span>
               </div>
-              <div class="legend-group">
-                <span class="legend-item"><span class="legend-dot video"></span> Regular Videos</span>
-                <span class="legend-item"><span class="legend-dot shorts"></span> Shorts</span>
+              <div class="legend-group" id="daily-chart-legend">
+                <span class="legend-item"><span class="legend-dot video"></span> Regular / Deep Focus</span>
+                <span class="legend-item"><span class="legend-dot shorts"></span> Microcontent / Shorts</span>
               </div>
             </div>
             <div class="canvas-container">
@@ -206,8 +222,8 @@
           <div class="chart-card flex-1">
             <div class="chart-header">
               <div class="chart-title-group">
-                <h3>Feature Split</h3>
-                <span class="chart-desc">Where your time goes</span>
+                <h3 id="donut-chart-title">Feature Split</h3>
+                <span class="chart-desc" id="donut-chart-desc">Where your time goes</span>
               </div>
             </div>
             <div class="canvas-container center-donut">
@@ -224,8 +240,8 @@
           <div class="chart-card flex-2">
             <div class="chart-header">
               <div class="chart-title-group">
-                <h3>Hourly Consumption Profile</h3>
-                <span class="chart-desc">When during the day you consume YouTube content (24h)</span>
+                <h3 id="hourly-chart-title">Hourly Consumption Profile</h3>
+                <span class="chart-desc" id="hourly-chart-desc">When during the day you consume content (24h)</span>
               </div>
             </div>
             <div class="canvas-container">
@@ -236,8 +252,8 @@
           <div class="chart-card flex-1">
             <div class="chart-header">
               <div class="chart-title-group">
-                <h3>Mindful Habits Check</h3>
-                <span class="chart-desc">Shorts doomscroll status</span>
+                <h3 id="wellness-chart-title">Mindful Habits Check</h3>
+                <span class="chart-desc" id="wellness-chart-desc">Doomscroll budget status</span>
               </div>
             </div>
             <div class="wellness-card-body">

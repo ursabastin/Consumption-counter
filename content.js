@@ -1,18 +1,20 @@
 /**
- * YouTube Consumption Counter - Content Script
- * Tracks video & shorts consumption, features usage, and renders the floating HUD.
+ * Social Media & Video Consumption Counter - Universal Content Script
+ * Tracks time & features across YouTube, Instagram, TikTok, Reddit, X, Discord, WhatsApp, LinkedIn, and more.
  */
 
 (() => {
-  // Prevent duplicate execution
-  if (window.__ytcc_injected) return;
-  window.__ytcc_injected = true;
+  if (window.__smcc_injected) return;
+  window.__smcc_injected = true;
 
-  console.log('[YT Consumption Counter] Content script loaded on YouTube.');
+  const currentPlatform = detectPlatform(location.hostname);
+  if (!currentPlatform) return;
+
+  console.log(`[Consumption Counter] Active tracker loaded on ${currentPlatform.name}.`);
 
   let currentUrl = location.href;
-  let currentContentType = detectContentType(location.pathname);
-  let currentItemId = extractItemId(location.href, currentContentType);
+  let currentContentType = detectFeatureType(currentPlatform.id, location.pathname);
+  let currentItemId = extractItemId(location.href, currentPlatform.id, currentContentType);
   let currentItemSeconds = 0;
   let viewCountRecordedForCurrent = false;
 
@@ -30,73 +32,142 @@
   let hudContainer = null;
   let isMinimized = false;
 
-  function detectContentType(pathname) {
-    if (pathname.startsWith('/shorts/')) return 'shorts';
-    if (pathname.startsWith('/watch')) return 'video';
-    if (pathname.startsWith('/results')) return 'search';
-    return 'browse';
+  function detectPlatform(hostname) {
+    const host = hostname.toLowerCase();
+    if (host.includes('youtube.com')) return { id: 'youtube', name: 'YouTube', icon: '🎬', color: '#FF0033' };
+    if (host.includes('instagram.com')) return { id: 'instagram', name: 'Instagram', icon: '📸', color: '#E1306C' };
+    if (host.includes('tiktok.com')) return { id: 'tiktok', name: 'TikTok', icon: '⚡', color: '#111827' };
+    if (host.includes('reddit.com')) return { id: 'reddit', name: 'Reddit', icon: '🟠', color: '#FF4500' };
+    if (host.includes('x.com') || host.includes('twitter.com')) return { id: 'x', name: 'X', icon: '🐦', color: '#0F1419' };
+    if (host.includes('discord.com')) return { id: 'discord', name: 'Discord', icon: '💬', color: '#5865F2' };
+    if (host.includes('whatsapp.com')) return { id: 'whatsapp', name: 'WhatsApp', icon: '📱', color: '#25D366' };
+    if (host.includes('linkedin.com')) return { id: 'linkedin', name: 'LinkedIn', icon: '💼', color: '#0A66C2' };
+    if (host.includes('pinterest.com')) return { id: 'pinterest', name: 'Pinterest', icon: '📌', color: '#BD081C' };
+    if (host.includes('snapchat.com')) return { id: 'snapchat', name: 'Snapchat', icon: '👻', color: '#EAB308' };
+    if (host.includes('facebook.com')) return { id: 'facebook', name: 'Facebook', icon: '👥', color: '#1877F2' };
+    if (host.includes('telegram.org')) return { id: 'telegram', name: 'Telegram', icon: '✈️', color: '#0284C7' };
+    if (host.includes('wechat.com') || host.includes('qq.com')) return { id: 'wechat', name: 'WeChat', icon: '🟢', color: '#059669' };
+    return null;
   }
 
-  function extractItemId(urlStr, type) {
+  function detectFeatureType(platformId, pathname) {
+    const p = pathname.toLowerCase();
+    switch (platformId) {
+      case 'youtube':
+        if (p.startsWith('/shorts/')) return 'shorts';
+        if (p.startsWith('/watch')) return 'video';
+        if (p.startsWith('/results')) return 'search';
+        return 'browse';
+
+      case 'instagram':
+        if (p.includes('/reels/') || p.includes('/reel/')) return 'reels';
+        if (p.includes('/stories/')) return 'stories';
+        if (p.includes('/explore/')) return 'explore';
+        if (p.includes('/direct/')) return 'messages';
+        return 'feed';
+
+      case 'tiktok':
+        if (p.includes('/live')) return 'live';
+        return 'feed'; // Short-form video loop
+
+      case 'facebook':
+        if (p.includes('/reel/') || p.includes('/watch')) return 'reels';
+        if (p.includes('/groups/')) return 'groups';
+        if (p.includes('/marketplace/')) return 'marketplace';
+        return 'feed';
+
+      case 'x':
+        if (p.includes('/status/')) return 'post_detail';
+        if (p.includes('/search')) return 'search';
+        if (p.includes('/explore')) return 'explore';
+        return 'timeline';
+
+      case 'reddit':
+        if (p.includes('/comments/')) return 'post_discussion';
+        if (p.startsWith('/r/')) return 'subreddit';
+        if (p.includes('/search')) return 'search';
+        return 'feed';
+
+      case 'linkedin':
+        if (p.includes('/jobs/')) return 'jobs';
+        if (p.includes('/messaging/')) return 'messages';
+        if (p.includes('/mynetwork/')) return 'network';
+        return 'feed';
+
+      case 'pinterest':
+        if (p.includes('/pin/')) return 'pin_detail';
+        if (p.includes('/search')) return 'search';
+        return 'board_feed';
+
+      case 'snapchat':
+        if (p.includes('/spotlight')) return 'spotlight';
+        if (p.includes('/stories')) return 'stories';
+        return 'chat';
+
+      case 'discord':
+        if (document.querySelector('[aria-label*="Disconnect"]') || document.querySelector('[class*="connected-"]')) {
+          return 'voice';
+        }
+        return 'chat';
+
+      case 'whatsapp':
+      case 'telegram':
+      case 'wechat':
+        return 'chat';
+
+      default:
+        return 'feed';
+    }
+  }
+
+  function extractItemId(urlStr, platformId, type) {
     try {
       const url = new URL(urlStr);
-      if (type === 'shorts') {
-        const parts = url.pathname.split('/');
-        return parts[2] || 'unknown_short';
+      if (platformId === 'youtube') {
+        if (type === 'shorts') return url.pathname.split('/')[2] || 'short';
+        if (type === 'video') return url.searchParams.get('v') || 'video';
+      } else if (platformId === 'instagram') {
+        if (type === 'reels') return url.pathname.split('/')[2] || 'reel';
+      } else if (platformId === 'reddit') {
+        if (type === 'post_discussion') return url.pathname.split('/')[4] || 'post';
+      } else if (platformId === 'x') {
+        if (type === 'post_detail') return url.pathname.split('/')[3] || 'tweet';
       }
-      if (type === 'video') {
-        return url.searchParams.get('v') || 'unknown_video';
-      }
-      if (type === 'search') {
-        return url.searchParams.get('search_query') || 'search';
-      }
-    } catch {
-      // fallback
-    }
-    return 'page';
+    } catch {}
+    return `${platformId}_${type}`;
   }
 
   function getItemMetadata() {
-    let title = '';
-    let channel = '';
-
-    if (currentContentType === 'shorts') {
-      const activeReel = document.querySelector('ytd-reel-video-renderer[is-active]');
-      if (activeReel) {
-        title = activeReel.querySelector('#overlay yt-formatted-string')?.textContent || '';
-        channel = activeReel.querySelector('#channel-name a')?.textContent || '';
-      }
-    } else if (currentContentType === 'video') {
-      title = document.querySelector('h1.ytd-watch-metadata yt-formatted-string')?.textContent ||
-              document.querySelector('h1.title yt-formatted-string')?.textContent || '';
-      channel = document.querySelector('#upload-info #channel-name a')?.textContent ||
-                document.querySelector('#owner #channel-name')?.textContent || '';
-    }
-
-    if (!title) {
-      title = document.title.replace(' - YouTube', '').trim() || (currentContentType === 'shorts' ? 'YouTube Short' : 'YouTube Video');
-    }
+    let title = document.title || `${currentPlatform.name} Activity`;
+    title = title.replace(/\s*-\s*YouTube|\s*\|\s*Instagram|\s*\/ X|\s*: Reddit/gi, '').trim();
 
     return {
+      platform: currentPlatform.id,
       id: currentItemId,
       type: currentContentType,
-      title: title.slice(0, 120),
-      channel: channel.trim() || 'YouTube Creator'
+      title: title.slice(0, 100),
+      channel: currentPlatform.name
     };
   }
 
-  function isMediaPlaying() {
+  function isUserEngaged() {
     const isVisible = cachedSettings.trackBackgroundAudio || document.visibilityState === 'visible';
     if (!isVisible) return false;
 
-    // Find active video element
-    const videos = document.querySelectorAll('video');
-    for (const v of videos) {
-      if (!v.paused && !v.ended && v.readyState >= 2 && v.currentTime > 0) {
-        return true;
+    // For video-centric platforms, verify video playback
+    if (['youtube', 'tiktok'].includes(currentPlatform.id) || currentContentType === 'reels') {
+      const videos = document.querySelectorAll('video');
+      for (const v of videos) {
+        if (!v.paused && !v.ended && v.readyState >= 2 && v.currentTime > 0) {
+          return true;
+        }
       }
+      // If browsing feed/comments without video, count as visible browsing
+      return document.hasFocus();
     }
-    return false;
+
+    // For interactive/text/messaging platforms (Discord, WhatsApp, Reddit, X, LinkedIn)
+    return document.hasFocus() || document.visibilityState === 'visible';
   }
 
   // Safe messaging helper to gracefully handle extension updates and invalidated context
@@ -106,7 +177,6 @@
     }
     try {
       chrome.runtime.sendMessage(message, (res) => {
-        // Accessing chrome.runtime.lastError clears the unhandled error warning
         const err = chrome.runtime.lastError;
         if (err) return;
         if (callback && res) {
@@ -114,7 +184,7 @@
         }
       });
     } catch {
-      // Extension context invalidated (e.g. extension was reloaded in developer mode)
+      // Extension context invalidated
     }
   }
 
@@ -125,12 +195,11 @@
     const secondsToSend = bufferedSeconds;
     bufferedSeconds = 0;
 
-    const itemData = (currentContentType === 'video' || currentContentType === 'shorts')
-      ? getItemMetadata()
-      : null;
+    const itemData = getItemMetadata();
 
     safeSendMessage({
       type: 'HEARTBEAT',
+      platform: currentPlatform.id,
       contentType: currentContentType,
       seconds: secondsToSend,
       itemData
@@ -146,13 +215,14 @@
     if (viewCountRecordedForCurrent) return;
 
     const isVideoEligible = (currentContentType === 'video' && currentItemSeconds >= 5);
-    const isShortEligible = (currentContentType === 'shorts' && currentItemSeconds >= 4);
+    const isShortEligible = ((currentContentType === 'shorts' || currentContentType === 'reels' || currentPlatform.id === 'tiktok') && currentItemSeconds >= 4);
 
     if (isVideoEligible || isShortEligible) {
       viewCountRecordedForCurrent = true;
       const itemData = getItemMetadata();
       safeSendMessage({
         type: 'RECORD_VIEW',
+        platform: currentPlatform.id,
         contentType: currentContentType,
         itemData
       }, (res) => {
@@ -168,29 +238,27 @@
   function handleUrlChange(newUrl) {
     if (newUrl === currentUrl) return;
 
-    // If leaving a short early without reaching 4s, record rapid short scroll
     if (currentContentType === 'shorts' && !viewCountRecordedForCurrent && currentItemSeconds >= 1) {
       safeSendMessage({
         type: 'FEATURE_ACTION',
+        platform: currentPlatform.id,
         featureName: 'short_scroll',
         count: 1
       });
     }
 
-    // Flush pending time
     flushHeartbeat();
 
-    // Reset item tracking
     currentUrl = newUrl;
-    currentContentType = detectContentType(location.pathname);
-    currentItemId = extractItemId(newUrl, currentContentType);
+    currentContentType = detectFeatureType(currentPlatform.id, location.pathname);
+    currentItemId = extractItemId(newUrl, currentPlatform.id, currentContentType);
     currentItemSeconds = 0;
     viewCountRecordedForCurrent = false;
 
-    // Track search query feature
     if (currentContentType === 'search') {
       safeSendMessage({
         type: 'FEATURE_ACTION',
+        platform: currentPlatform.id,
         featureName: 'search',
         count: 1
       });
@@ -201,32 +269,23 @@
 
   // Periodic 1-second watch loop
   const trackerInterval = setInterval(() => {
-    // Cleanly stop execution if extension was reloaded or disabled
     if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
       clearInterval(trackerInterval);
       return;
     }
 
-    // Check for SPA URL change
     if (location.href !== currentUrl) {
       handleUrlChange(location.href);
     }
 
-    const playing = isMediaPlaying();
+    const engaged = isUserEngaged();
 
-    if (playing) {
+    if (engaged) {
       bufferedSeconds++;
       currentItemSeconds++;
       recordViewIfEligible();
 
-      // Flush every 3 seconds
       if (bufferedSeconds >= 3) {
-        flushHeartbeat();
-      }
-    } else if (currentContentType === 'browse' && document.visibilityState === 'visible') {
-      // Browsing home/feed without video playing
-      bufferedSeconds++;
-      if (bufferedSeconds >= 5) {
         flushHeartbeat();
       }
     }
@@ -234,7 +293,6 @@
     updateHudLiveCounter();
   }, 1000);
 
-  // Send before tab closes or navigates away
   window.addEventListener('beforeunload', () => {
     flushHeartbeat();
   });
@@ -245,37 +303,17 @@
     }
   });
 
-  // YouTube navigation event listeners
-  window.addEventListener('yt-navigate-finish', () => {
-    handleUrlChange(location.href);
-  });
-  window.addEventListener('popstate', () => {
-    handleUrlChange(location.href);
-  });
+  // SPA navigation listeners
+  window.addEventListener('yt-navigate-finish', () => handleUrlChange(location.href));
+  window.addEventListener('popstate', () => handleUrlChange(location.href));
 
-  // Track comment activity
-  document.addEventListener('focusin', (e) => {
-    if (e.target && (e.target.id === 'contenteditable-root' || e.target.closest('#comment-input') || e.target.closest('#commentbox'))) {
-      if (!window.__ytcc_comment_tracked) {
-        window.__ytcc_comment_tracked = true;
-        safeSendMessage({
-          type: 'FEATURE_ACTION',
-          featureName: 'comment',
-          count: 1
-        });
-        setTimeout(() => { window.__ytcc_comment_tracked = false; }, 30000);
-      }
-    }
-  }, true);
-
-  // Setup HUD
+  // Floating Capsule HUD Setup
   function setupHud() {
     if (document.getElementById('ytcc-hud-root')) return;
 
     hudRoot = document.createElement('div');
     hudRoot.id = 'ytcc-hud-root';
 
-    // Restore saved position
     const savedPos = localStorage.getItem('ytcc_hud_position');
     if (savedPos) {
       try {
@@ -288,22 +326,22 @@
     }
 
     hudRoot.innerHTML = `
-      <div id="ytcc-hud-container" title="YouTube Consumption Counter - Drag to reposition | Double-click to collapse">
+      <div id="ytcc-hud-container" title="${currentPlatform.name} Consumption Counter - Drag to reposition | Double-click to collapse">
         <div class="ytcc-glow-backdrop"></div>
         <div class="ytcc-pulse-dot" id="ytcc-dot"></div>
-        <div class="ytcc-current-badge ${currentContentType === 'shorts' ? 'shorts' : ''}" id="ytcc-current-badge">
-          <span id="ytcc-type-icon">${currentContentType === 'shorts' ? '⚡' : '🎬'}</span>
+        <div class="ytcc-current-badge ${isMicrocontent(currentContentType) ? 'shorts' : ''}" id="ytcc-current-badge">
+          <span id="ytcc-type-icon">${currentPlatform.icon}</span>
           <span id="ytcc-item-timer">00:00</span>
         </div>
         <div class="ytcc-counters">
           <div class="ytcc-counter-item">
-            <span class="label">Videos</span>
-            <span class="value" id="ytcc-stat-videos">0 (0m)</span>
+            <span class="label">${currentPlatform.name}</span>
+            <span class="value" id="ytcc-stat-platform">0m</span>
           </div>
           <div class="ytcc-divider"></div>
           <div class="ytcc-counter-item">
-            <span class="label">Shorts</span>
-            <span class="value" id="ytcc-stat-shorts">0 (0m)</span>
+            <span class="label">Total Social</span>
+            <span class="value" id="ytcc-stat-total">0m</span>
           </div>
         </div>
         <div class="ytcc-hud-actions">
@@ -320,10 +358,8 @@
     document.body.appendChild(hudRoot);
     hudContainer = document.getElementById('ytcc-hud-container');
 
-    // Dragging logic
     makeDraggable(hudRoot, hudContainer);
 
-    // Buttons (Dashboard and Minimize only - No cross/remove button)
     document.getElementById('ytcc-btn-dash').addEventListener('click', (e) => {
       e.stopPropagation();
       safeSendMessage({ type: 'OPEN_DASHBOARD' });
@@ -339,6 +375,10 @@
       isMinimized = !isMinimized;
       hudContainer.classList.toggle('minimized', isMinimized);
     });
+  }
+
+  function isMicrocontent(type) {
+    return ['shorts', 'reels', 'spotlight'].includes(type) || currentPlatform.id === 'tiktok';
   }
 
   function makeDraggable(rootEl, handleEl) {
@@ -377,7 +417,6 @@
         window.removeEventListener('mousemove', onMouseMove);
         window.removeEventListener('mouseup', onMouseUp);
 
-        // Save position
         const rect = rootEl.getBoundingClientRect();
         localStorage.setItem('ytcc_hud_position', JSON.stringify({ x: rect.left, y: rect.top }));
       };
@@ -407,40 +446,42 @@
     const badge = document.getElementById('ytcc-current-badge');
     const typeIcon = document.getElementById('ytcc-type-icon');
     if (badge && typeIcon) {
-      if (currentContentType === 'shorts') {
-        badge.className = 'ytcc-current-badge shorts';
-        typeIcon.textContent = '⚡';
-      } else {
-        badge.className = 'ytcc-current-badge';
-        typeIcon.textContent = '🎬';
-      }
+      typeIcon.textContent = currentPlatform.icon;
+      badge.className = isMicrocontent(currentContentType) ? 'ytcc-current-badge shorts' : 'ytcc-current-badge';
     }
 
     if (!cachedTodayStats) return;
 
-    const vidEl = document.getElementById('ytcc-stat-videos');
-    const shortsEl = document.getElementById('ytcc-stat-shorts');
+    const platEl = document.getElementById('ytcc-stat-platform');
+    const totalEl = document.getElementById('ytcc-stat-total');
     const dotEl = document.getElementById('ytcc-dot');
 
-    if (vidEl) {
-      const vMins = Math.floor((cachedTodayStats.videoSeconds || 0) / 60);
-      vidEl.textContent = `${cachedTodayStats.videoCount || 0} (${vMins}m)`;
+    const pSec = (cachedTodayStats.platforms && cachedTodayStats.platforms[currentPlatform.id])
+      ? (cachedTodayStats.platforms[currentPlatform.id].seconds || 0)
+      : (currentPlatform.id === 'youtube' ? ((cachedTodayStats.videoSeconds || 0) + (cachedTodayStats.shortsSeconds || 0)) : 0);
+
+    const totalSec = cachedTodayStats.totalSocialSeconds || ((cachedTodayStats.videoSeconds || 0) + (cachedTodayStats.shortsSeconds || 0));
+
+    if (platEl) {
+      const pMins = Math.floor(pSec / 60);
+      platEl.textContent = `${pMins}m`;
     }
 
-    if (shortsEl) {
-      const sMins = Math.floor((cachedTodayStats.shortsSeconds || 0) / 60);
-      shortsEl.textContent = `${cachedTodayStats.shortsCount || 0} (${sMins}m)`;
+    if (totalEl) {
+      const tMins = Math.floor(totalSec / 60);
+      totalEl.textContent = tMins >= 60 ? `${(tMins / 60).toFixed(1)}h` : `${tMins}m`;
+    }
 
-      // Status dot alert
-      const shortsLimit = cachedSettings.shortsDailyLimitMinutes || 25;
-      if (dotEl) {
-        if (sMins >= shortsLimit) {
-          dotEl.className = 'ytcc-pulse-dot danger';
-        } else if (sMins >= shortsLimit * 0.8) {
-          dotEl.className = 'ytcc-pulse-dot warning';
-        } else {
-          dotEl.className = 'ytcc-pulse-dot';
-        }
+    // Doomscroll Status Dot Alert
+    const microLimit = cachedSettings.shortsDailyLimitMinutes || 25;
+    const microMins = Math.floor((cachedTodayStats.microcontentSeconds || (cachedTodayStats.shortsSeconds || 0)) / 60);
+    if (dotEl) {
+      if (microMins >= microLimit) {
+        dotEl.className = 'ytcc-pulse-dot danger';
+      } else if (microMins >= microLimit * 0.8) {
+        dotEl.className = 'ytcc-pulse-dot warning';
+      } else {
+        dotEl.className = 'ytcc-pulse-dot';
       }
     }
   }
@@ -457,7 +498,7 @@
     }
   });
 
-  // Listen for storage changes from popup or options page
+  // Listen for storage changes
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
     chrome.storage.onChanged.addListener((changes) => {
       if (changes.today) {

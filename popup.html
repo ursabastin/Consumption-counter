@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Consumption Counter</title>
+  <title>Social Media Consumption Counter</title>
   <link rel="stylesheet" href="popup.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
         <div class="logo-box">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <rect width="24" height="24" rx="7" fill="url(#brandGrad)" />
-            <circle cx="12" cy="12" r="7.5" stroke="#6366F1" stroke-width="2" stroke-dasharray="32" stroke-dashoffset="10" stroke-linecap="round" />
+            <circle cx="12" cy="12" r="7.5" stroke="#FFFFFF" stroke-opacity="0.8" stroke-width="2" stroke-dasharray="32" stroke-dashoffset="10" stroke-linecap="round" />
             <polygon points="10,8.5 16,12 10,15.5" fill="#FFFFFF" />
             <defs>
               <linearGradient id="brandGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
@@ -28,8 +28,8 @@
           </svg>
         </div>
         <div class="brand-text">
-          <h1>YT Counter</h1>
-          <div class="live-pill"><span class="dot"></span> Monitoring</div>
+          <h1>Social Counter</h1>
+          <div class="live-pill"><span class="dot"></span> All Platforms Active</div>
         </div>
       </div>
       <button id="open-dashboard-btn" class="icon-link-btn" title="Open Full Dashboard">
@@ -47,54 +47,30 @@
       <div class="hero-ambient"></div>
       <div class="hero-content">
         <div class="hero-meta">
-          <span class="hero-label">Today's Active Watch Time</span>
+          <span class="hero-label">Today's Total Social Screen Time</span>
           <span class="hero-badge" id="consumption-badge">Mindful</span>
         </div>
         <div class="hero-value" id="today-total-time">0h 0m 0s</div>
       </div>
     </div>
 
-    <!-- Dual KPI Bento Grid (Videos vs Shorts) -->
-    <div class="bento-grid">
-      <!-- Regular Videos Card -->
-      <div class="bento-card video-card">
-        <div class="bento-header">
-          <span class="tag video-tag">🎬 Videos</span>
-          <span class="count-pill" id="video-count">0</span>
-        </div>
-        <div class="bento-time" id="video-time">0m</div>
-        <div class="bento-sub" id="video-sub">Avg 0m / video</div>
+    <!-- Active Platforms Grid Carousel -->
+    <div class="platforms-section">
+      <div class="section-title">
+        <span>Active Platforms Today</span>
+        <span class="sub-counter" id="active-platforms-count">13 Monitored</span>
       </div>
-
-      <!-- Shorts Card -->
-      <div class="bento-card shorts-card">
-        <div class="bento-header">
-          <span class="tag shorts-tag">⚡ Shorts</span>
-          <span class="count-pill" id="shorts-count">0</span>
-        </div>
-        <div class="bento-time" id="shorts-time">0m</div>
-        <div class="bento-sub" id="shorts-sub">Avg 0s / short</div>
+      <div class="platforms-pill-grid" id="platforms-pill-grid">
+        <!-- Dynamically injected via popup.js -->
       </div>
     </div>
 
-    <!-- Consumption Ratio Segment -->
-    <div class="ratio-bento">
-      <div class="ratio-header">
-        <span>Format Split</span>
-        <span class="ratio-stats" id="ratio-label">0% Videos • 0% Shorts</span>
-      </div>
-      <div class="ratio-track">
-        <div class="ratio-fill video-fill" id="bar-video" style="width: 50%;"></div>
-        <div class="ratio-fill shorts-fill" id="bar-shorts" style="width: 50%;"></div>
-      </div>
-    </div>
-
-    <!-- Shorts Doomscroll Budget Meter -->
+    <!-- Unified Short-Form Doomscroll Budget Meter (Shorts + Reels + TikTok) -->
     <div class="alert-bento" id="doomscroll-box">
       <div class="alert-top">
         <div class="alert-title">
-          <span class="alert-icon">⏱️</span>
-          <span>Shorts Daily Budget</span>
+          <span class="alert-icon">⚡</span>
+          <span>Shorts & Reels Budget</span>
         </div>
         <span class="alert-status" id="shorts-limit-status">0m / 25m</span>
       </div>
@@ -103,36 +79,34 @@
       </div>
     </div>
 
-    <!-- Feature Activity Row -->
-    <div class="features-grid">
-      <div class="feat-pill" title="Shorts skipped in under 4 seconds">
-        <span class="feat-icon">⏭️</span>
-        <div class="feat-data">
-          <span class="feat-val" id="feat-scrolls">0</span>
-          <span class="feat-lbl">Skips</span>
+    <!-- Dual Bento Cards (Videos vs Shorts / Microcontent) -->
+    <div class="bento-grid">
+      <!-- Long-form / Intentional Card -->
+      <div class="bento-card video-card">
+        <div class="bento-header">
+          <span class="tag video-tag">🎬 Long-form</span>
+          <span class="count-pill" id="video-count">0 items</span>
         </div>
+        <div class="bento-time" id="video-time">0m</div>
+        <div class="bento-sub" id="video-sub">Intentional deep focus</div>
       </div>
-      <div class="feat-pill" title="YouTube Search queries">
-        <span class="feat-icon">🔍</span>
-        <div class="feat-data">
-          <span class="feat-val" id="feat-searches">0</span>
-          <span class="feat-lbl">Searches</span>
+
+      <!-- Microcontent / Doomscroll Card -->
+      <div class="bento-card shorts-card">
+        <div class="bento-header">
+          <span class="tag shorts-tag">⚡ Micro-video</span>
+          <span class="count-pill" id="shorts-count">0 items</span>
         </div>
-      </div>
-      <div class="feat-pill" title="Home and Subscriptions Feed Browsing Time">
-        <span class="feat-icon">🧭</span>
-        <div class="feat-data">
-          <span class="feat-val" id="feat-browse">0m</span>
-          <span class="feat-lbl">Browse</span>
-        </div>
+        <div class="bento-time" id="shorts-time">0m</div>
+        <div class="bento-sub" id="shorts-sub">Shorts, Reels & TikTok</div>
       </div>
     </div>
 
     <!-- HUD Toggle Switch -->
     <div class="toggle-card">
       <div class="toggle-text">
-        <span class="toggle-title">Floating HUD on YouTube</span>
-        <span class="toggle-desc">Persistent draggable counter pill</span>
+        <span class="toggle-title">On-Page HUD Capsule</span>
+        <span class="toggle-desc">Persistent live counter on all social sites</span>
       </div>
       <label class="modern-switch">
         <input type="checkbox" id="toggle-hud" checked>
@@ -143,7 +117,7 @@
     <!-- Bottom Actions -->
     <div class="popup-footer">
       <button id="view-dashboard-btn" class="btn-modern-primary">
-        <span>Open Analytics Hub</span>
+        <span>Open Multi-Platform Analytics</span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>

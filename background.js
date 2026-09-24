@@ -1,13 +1,13 @@
 /**
- * YouTube Consumption Counter - Background Service Worker
- * Handles alarm reminders, badge indicators, storage synchronization, and notifications.
+ * Social Media & Video Consumption Counter - Background Service Worker
+ * Handles alarm reminders, badge indicators, storage synchronization, and notifications across all platforms.
  */
 
-import { StorageService, formatDuration, getTodayKey } from './utils/storage.js';
+import { StorageService, formatDuration, getTodayKey, PLATFORM_CONFIG } from './utils/storage.js';
 
 // Setup on install
 chrome.runtime.onInstalled.addListener(async (details) => {
-  console.log('[YT Consumption Counter] Extension installed:', details.reason);
+  console.log('[Consumption Counter] Extension installed:', details.reason);
   const data = await StorageService.getAllData();
   updateBadge(data.today, data.settings);
 
@@ -28,7 +28,7 @@ if (chrome.alarms && chrome.alarms.onAlarm) {
 // Update toolbar action badge
 function updateBadge(today, settings) {
   if (!today) return;
-  const totalSeconds = (today.videoSeconds || 0) + (today.shortsSeconds || 0);
+  const totalSeconds = today.totalSocialSeconds || ((today.videoSeconds || 0) + (today.shortsSeconds || 0));
   const totalMinutes = Math.floor(totalSeconds / 60);
 
   let text = '';
@@ -42,13 +42,14 @@ function updateBadge(today, settings) {
 
   chrome.action.setBadgeText({ text });
 
-  // Badge color based on limits
-  const shortsLimitMinutes = settings?.shortsDailyLimitMinutes || 25;
-  const shortsMinutes = Math.floor((today.shortsSeconds || 0) / 60);
+  // Badge color based on microcontent limits (Shorts, Reels, TikTok)
+  const microLimitMinutes = settings?.shortsDailyLimitMinutes || 25;
+  const microSeconds = today.microcontentSeconds || (today.shortsSeconds || 0);
+  const microMinutes = Math.floor(microSeconds / 60);
 
-  if (shortsMinutes >= shortsLimitMinutes) {
-    chrome.action.setBadgeBackgroundColor({ color: '#E11D48' }); // Rose crimson alert
-  } else if (shortsMinutes >= shortsLimitMinutes * 0.8) {
+  if (microMinutes >= microLimitMinutes) {
+    chrome.action.setBadgeBackgroundColor({ color: '#E11D48' }); // Rose alert
+  } else if (microMinutes >= microLimitMinutes * 0.8) {
     chrome.action.setBadgeBackgroundColor({ color: '#D97706' }); // Warm amber warning
   } else {
     chrome.action.setBadgeBackgroundColor({ color: '#4F46E5' }); // Grounded indigo
@@ -63,17 +64,18 @@ async function checkNotificationLimits(today, settings) {
   const now = Date.now();
   if (now - lastNotifTime < 1000 * 60 * 15) return; // 15 minute cooldown
 
-  const shortsMinutes = Math.floor((today.shortsSeconds || 0) / 60);
-  const shortsLimit = settings.shortsDailyLimitMinutes || 25;
+  const microLimit = settings.shortsDailyLimitMinutes || 25;
+  const microSeconds = today.microcontentSeconds || (today.shortsSeconds || 0);
+  const microMinutes = Math.floor(microSeconds / 60);
 
-  if (shortsMinutes >= shortsLimit) {
+  if (microMinutes >= microLimit) {
     lastNotifTime = now;
     if (chrome.notifications) {
       chrome.notifications.create({
         type: 'basic',
         iconUrl: 'icons/icon128.png',
-        title: '⚠️ YouTube Shorts Limit Reached!',
-        message: `You've spent ${shortsMinutes} minutes on Shorts today (limit is ${shortsLimit}m). Time for a mindful break!`,
+        title: '⚠️ Short-Form Media Limit Reached!',
+        message: `You've spent ${microMinutes} minutes on Shorts/Reels/TikTok today (limit is ${microLimit}m). Time for a mindful break!`,
         priority: 2
       });
     }
@@ -86,6 +88,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     try {
       if (message.type === 'HEARTBEAT') {
         const { today, settings } = await StorageService.recordHeartbeat({
+          platform: message.platform || 'youtube',
           type: message.contentType,
           seconds: message.seconds || 1,
           itemData: message.itemData
@@ -95,12 +98,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: true, today });
       } else if (message.type === 'RECORD_VIEW') {
         const today = await StorageService.recordViewCount({
+          platform: message.platform || 'youtube',
           type: message.contentType,
           itemData: message.itemData
         });
         sendResponse({ success: true, today });
       } else if (message.type === 'FEATURE_ACTION') {
-        const today = await StorageService.recordFeatureAction(message.featureName, message.count || 1);
+        const today = await StorageService.recordFeatureAction(
+          message.featureName,
+          message.count || 1,
+          message.platform || 'youtube'
+        );
         sendResponse({ success: true, today });
       } else if (message.type === 'GET_DATA') {
         const data = await StorageService.getAllData();
@@ -110,9 +118,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: true });
       }
     } catch (err) {
-      console.error('[YT Consumption Counter] Error handling message:', err);
+      console.error('[Consumption Counter] Error handling message:', err);
       sendResponse({ success: false, error: err.message });
     }
   })();
-  return true; // Keep message channel open for async response
+  return true;
 });
