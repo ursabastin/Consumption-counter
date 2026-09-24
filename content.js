@@ -97,6 +97,23 @@
       }
     }
     return false;
+  // Safe messaging helper to gracefully handle extension updates and invalidated context
+  function safeSendMessage(message, callback) {
+    if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage(message, (res) => {
+        // Accessing chrome.runtime.lastError clears the unhandled error warning
+        const err = chrome.runtime.lastError;
+        if (err) return;
+        if (callback && res) {
+          callback(res);
+        }
+      });
+    } catch {
+      // Extension context invalidated (e.g. extension was reloaded in developer mode)
+    }
   }
 
   // Send accumulated heartbeat to background script
@@ -110,13 +127,12 @@
       ? getItemMetadata()
       : null;
 
-    chrome.runtime.sendMessage({
+    safeSendMessage({
       type: 'HEARTBEAT',
       contentType: currentContentType,
       seconds: secondsToSend,
       itemData
     }, (res) => {
-      if (chrome.runtime.lastError) return;
       if (res && res.today) {
         cachedTodayStats = res.today;
         updateHudUI();
@@ -133,12 +149,11 @@
     if (isVideoEligible || isShortEligible) {
       viewCountRecordedForCurrent = true;
       const itemData = getItemMetadata();
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: 'RECORD_VIEW',
         contentType: currentContentType,
         itemData
       }, (res) => {
-        if (chrome.runtime.lastError) return;
         if (res && res.today) {
           cachedTodayStats = res.today;
           updateHudUI();
@@ -153,7 +168,7 @@
 
     // If leaving a short early without reaching 4s, record rapid short scroll
     if (currentContentType === 'shorts' && !viewCountRecordedForCurrent && currentItemSeconds >= 1) {
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: 'FEATURE_ACTION',
         featureName: 'short_scroll',
         count: 1
@@ -172,7 +187,7 @@
 
     // Track search query feature
     if (currentContentType === 'search') {
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: 'FEATURE_ACTION',
         featureName: 'search',
         count: 1
