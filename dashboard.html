@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Consumption Counter & Analytics Hub</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="7" fill="url(#dashBrandGrad)" />
+            <circle cx="12" cy="12" r="7.5" stroke="#FFFFFF" stroke-opacity="0.8" stroke-width="2" stroke-dasharray="32" stroke-dashoffset="10" stroke-linecap="round" />
+            <polygon points="10,8.5 16,12 10,15.5" fill="#FFFFFF" />
+            <defs>
+              <linearGradient id="dashBrandGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E11D48" />
+                <stop offset="1" stop-color="#4F46E5" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="brand-info">
+            <span class="brand-title">YT Counter</span>
+            <span class="brand-sub">Analytics & Tracker</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="overview">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-tab="trends">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Trends & Habits</span>
+        </button>
+        <button class="nav-item" data-tab="history">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Watch Log</span>
+        </button>
+        <button class="nav-item" data-tab="importer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Takeout & Import</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Limits & Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="quick-status-card">
+          <div class="pulse-indicator">
+            <span class="pulse-ping"></span>
+            <span class="pulse-core"></span>
+          </div>
+          <div class="quick-status-text">
+            <span class="status-title">Monitoring Active</span>
+            <span class="status-sub" id="sidebar-live-timer">YouTube Ready</span>
+          </div>
+        </div>
+        <button id="btn-demo-data" class="btn-demo" title="Populate with realistic sample data to preview all graphs and stats">
+          ⚡ Load Sample Data
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="page-title">Consumption Overview</h1>
+          <p class="page-subtitle" id="page-subtitle">Track, quantify, and balance your YouTube video & shorts consumption</p>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Time Range Selector -->
+          <div class="time-filter">
+            <button class="filter-btn active" data-range="today">Today</button>
+            <button class="filter-btn" data-range="7d">Last 7 Days</button>
+            <button class="filter-btn" data-range="30d">Last 30 Days</button>
+            <button class="filter-btn" data-range="all">All Time</button>
+          </div>
+
+          <div class="header-actions">
+            <button id="btn-export-json" class="btn-secondary" title="Export data as JSON">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export</span>
+            </button>
+            <a href="https://www.youtube.com" target="_blank" class="btn-yt" title="Open YouTube">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>YouTube</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <!-- TAB 1: OVERVIEW -->
+      <section id="tab-overview" class="tab-pane active">
+        <!-- Hero Metrics Grid -->
+        <div class="metrics-grid">
+          <!-- Total Time -->
+          <div class="metric-card total-time-card">
+            <div class="metric-icon-wrap time">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Total Time Spent</span>
+              <div class="metric-value" id="kpi-total-time">0h 0m</div>
+              <span class="metric-hint" id="kpi-total-hint">Active watch time</span>
+            </div>
+          </div>
+
+          <!-- Regular Videos -->
+          <div class="metric-card video-time-card">
+            <div class="metric-icon-wrap video">
+              🎬
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Regular Videos</span>
+              <div class="metric-value" id="kpi-video-time">0h 0m</div>
+              <span class="metric-hint" id="kpi-video-count">0 videos watched</span>
+            </div>
+          </div>
+
+          <!-- Shorts -->
+          <div class="metric-card shorts-time-card">
+            <div class="metric-icon-wrap shorts">
+              ⚡
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">YouTube Shorts</span>
+              <div class="metric-value" id="kpi-shorts-time">0h 0m</div>
+              <span class="metric-hint" id="kpi-shorts-count">0 shorts watched</span>
+            </div>
+          </div>
+
+          <!-- Shorts vs Video Ratio -->
+          <div class="metric-card ratio-card">
+            <div class="metric-icon-wrap balance">
+              ⚖️
+            </div>
+            <div class="metric-content">
+              <span class="metric-label">Shorts vs Video Ratio</span>
+              <div class="metric-value" id="kpi-ratio-val">0% / 0%</div>
+              <span class="metric-hint" id="kpi-ratio-hint">Balanced consumption</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary Highlights Strip -->
+        <div class="sub-metrics-strip">
+          <div class="sub-metric">
+            <span class="sub-label">Avg Time / Video</span>
+            <span class="sub-value" id="sub-avg-video">0m 0s</span>
+          </div>
+          <div class="sub-metric-divider"></div>
+          <div class="sub-metric">
+            <span class="sub-label">Avg Time / Short</span>
+            <span class="sub-value" id="sub-avg-short">0s</span>
+          </div>
+          <div class="sub-metric-divider"></div>
+          <div class="sub-metric">
+            <span class="sub-label">Shorts Rapid Skips</span>
+            <span class="sub-value" id="sub-shorts-skipped">0</span>
+          </div>
+          <div class="sub-metric-divider"></div>
+          <div class="sub-metric">
+            <span class="sub-label">Searches Executed</span>
+            <span class="sub-value" id="sub-search-count">0</span>
+          </div>
+          <div class="sub-metric-divider"></div>
+          <div class="sub-metric">
+            <span class="sub-label">Feed Browsing Time</span>
+            <span class="sub-value" id="sub-browse-time">0m</span>
+          </div>
+        </div>
+
+        <!-- Charts Row 1: Daily Trend & Distribution -->
+        <div class="charts-row">
+          <div class="chart-card flex-2">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3>Daily Consumption: Videos vs Shorts</h3>
+                <span class="chart-desc">Watch time distribution across days</span>
+              </div>
+              <div class="legend-group">
+                <span class="legend-item"><span class="legend-dot video"></span> Regular Videos</span>
+                <span class="legend-item"><span class="legend-dot shorts"></span> Shorts</span>
+              </div>
+            </div>
+            <div class="canvas-container">
+              <canvas id="dailyTrendCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card flex-1">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3>Feature Split</h3>
+                <span class="chart-desc">Where your time goes</span>
+              </div>
+            </div>
+            <div class="canvas-container center-donut">
+              <canvas id="featureDonutCanvas"></canvas>
+            </div>
+            <div class="donut-summary" id="donut-legend-summary">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row 2: Hourly Activity & Doomscroll Health -->
+        <div class="charts-row">
+          <div class="chart-card flex-2">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3>Hourly Consumption Profile</h3>
+                <span class="chart-desc">When during the day you consume YouTube content (24h)</span>
+              </div>
+            </div>
+            <div class="canvas-container">
+              <canvas id="hourlyCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card flex-1">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3>Mindful Habits Check</h3>
+                <span class="chart-desc">Shorts doomscroll status</span>
+              </div>
+            </div>
+            <div class="wellness-card-body">
+              <div class="gauge-wrapper">
+                <canvas id="wellnessGaugeCanvas" width="180" height="110"></canvas>
+                <div class="gauge-center-text">
+                  <span class="gauge-score" id="wellness-pct">0%</span>
+                  <span class="gauge-label">of Daily Limit</span>
+                </div>
+              </div>
+              <div class="wellness-details">
+                <div class="wellness-row">
+                  <span>Today's Shorts:</span>
+                  <strong id="wellness-shorts-used">0m / 25m</strong>
+                </div>
+                <div class="wellness-row">
+                  <span>Status:</span>
+                  <span class="status-pill good" id="wellness-status-pill">Within Limits</span>
+                </div>
+                <p class="wellness-advice" id="wellness-advice-text">
+                  You are consuming content mindfully. Keep regular videos for deep dives and short breaks!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TRENDS & HABITS -->
+      <section id="tab-trends" class="tab-pane">
+        <div class="insights-banner">
+          <div class="insights-icon">💡</div>
+          <div class="insights-text">
+            <h4>Habit Analysis & Consumption Insights</h4>
+            <p id="habit-insight-text">Analyzing your browsing patterns...</p>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card flex-1">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3>Videos Watched vs Shorts Scrolled Count</h3>
+                <span class="chart-desc">Comparing raw count volume</span>
+              </div>
+            </div>
+            <div class="canvas-container">
+              <canvas id="countComparisonCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card flex-1">
+            <div class="chart-header">
+              <div class="chart-title-group">
+                <h3>Session Duration Distribution</h3>
+                <span class="chart-desc">How long you stay watching YouTube per sitting</span>
+              </div>
+            </div>
+            <div class="canvas-container">
+              <canvas id="sessionDurationCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: WATCH LOG -->
+      <section id="tab-history" class="tab-pane">
+        <div class="history-controls-card">
+          <div class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="history-search" placeholder="Search by video title or channel...">
+          </div>
+
+          <div class="type-filter-group">
+            <button class="type-filter-btn active" data-filter="all">All Content</button>
+            <button class="type-filter-btn" data-filter="video">🎬 Videos Only</button>
+            <button class="type-filter-btn" data-filter="shorts">⚡ Shorts Only</button>
+          </div>
+
+          <button id="btn-export-csv" class="btn-secondary" title="Export watch history to CSV">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+            <span>Export CSV</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th width="80">Type</th>
+                <th>Title & Channel</th>
+                <th width="140">Watch Time</th>
+                <th width="180">Watched At</th>
+                <th width="80">Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+          <div id="table-empty" class="empty-state" style="display: none;">
+            <p>No watch records found matching criteria.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: TAKEOUT & IMPORT -->
+      <section id="tab-importer" class="tab-pane">
+        <div class="importer-grid">
+          <!-- Takeout Drop Area -->
+          <div class="card importer-card">
+            <h3>Google Takeout Watch History Importer</h3>
+            <p class="card-desc">
+              Import your exported Google Takeout history (<code>watch-history.json</code> or <code>watch-history.html</code>) to calculate historical consumption stats!
+            </p>
+
+            <div class="dropzone" id="takeout-dropzone">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div class="drop-text">
+                <strong>Click or drag & drop watch-history.json / html</strong>
+                <span>Supports Google Takeout ZIP or JSON directly</span>
+              </div>
+              <input type="file" id="file-takeout" accept=".json,.html,.zip" style="display: none;">
+            </div>
+
+            <div id="takeout-result" class="import-result" style="display: none;"></div>
+          </div>
+
+          <!-- Backup & Restore -->
+          <div class="card backup-card">
+            <h3>Backup & Restore</h3>
+            <p class="card-desc">Save your extension data or transfer it to another computer.</p>
+            
+            <div class="backup-actions">
+              <button id="btn-download-backup" class="btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download Full Backup (JSON)</span>
+              </button>
+
+              <button id="btn-import-backup" class="btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+                <span>Restore from Backup</span>
+              </button>
+              <input type="file" id="file-restore" accept=".json" style="display: none;">
+            </div>
+
+            <div class="danger-zone">
+              <h4>Reset Data</h4>
+              <p>Permanently clear all recorded consumption statistics.</p>
+              <button id="btn-clear-all" class="btn-danger">Clear All History & Stats</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: LIMITS & SETTINGS -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="settings-container">
+          <div class="card settings-card">
+            <h3>Wellness & Limits Configuration</h3>
+            <p class="card-desc">Set mindful boundaries for your YouTube consumption</p>
+
+            <form id="settings-form" class="settings-form">
+              <div class="form-group">
+                <label for="input-shorts-limit">Daily Shorts Time Limit (Minutes)</label>
+                <div class="input-with-hint">
+                  <input type="number" id="input-shorts-limit" min="5" max="300" step="5" value="25">
+                  <span class="input-hint">Alerts you when shorts time exceeds this threshold</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-total-limit">Daily Total YouTube Limit (Minutes)</label>
+                <div class="input-with-hint">
+                  <input type="number" id="input-total-limit" min="15" max="720" step="15" value="120">
+                  <span class="input-hint">Combined limit for videos + shorts</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-break-interval">Break Reminder Frequency (Minutes)</label>
+                <div class="input-with-hint">
+                  <input type="number" id="input-break-interval" min="10" max="180" step="5" value="30">
+                  <span class="input-hint">Prompts for a quick pause during long sessions</span>
+                </div>
+              </div>
+
+              <div class="form-divider"></div>
+
+              <div class="form-toggle-row">
+                <div class="toggle-info">
+                  <strong>Floating Heads-Up Display (HUD)</strong>
+                  <span>Display the live draggable counter overlay right inside YouTube pages</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="input-show-hud" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="form-toggle-row">
+                <div class="toggle-info">
+                  <strong>Shorts Doomscroll Warning Notification</strong>
+                  <span>Send a system notification when you exceed your daily Shorts limit</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="input-doomscroll-alert" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="form-toggle-row">
+                <div class="toggle-info">
+                  <strong>Track Background Audio Playback</strong>
+                  <span>Count watch time even when the YouTube tab is not actively focused/visible</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="input-track-bg">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Settings</button>
+                <span id="save-status" class="save-status-msg"></span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
