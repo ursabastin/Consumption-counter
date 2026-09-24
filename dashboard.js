@@ -1,5 +1,5 @@
 /**
- * Multi-Platform Social Media & YouTube Consumption Counter - Dashboard Engine
+ * Consumption Counter - Analytics & Multi-Platform Command Engine
  * Handles analytics calculation, retina canvas charts, multi-platform filtering,
  * Google Takeout parsing, and unified mindful consumption tracking across 13 platforms.
  */

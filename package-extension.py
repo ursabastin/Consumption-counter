@@ -1,13 +1,16 @@
 import os
 import zipfile
+import shutil
 
 def package_extension():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    zip_path = os.path.join(base_dir, "youtube-consumption-counter.zip")
+    primary_zip = os.path.join(base_dir, "consumption-counter.zip")
+    legacy_zip = os.path.join(base_dir, "youtube-consumption-counter.zip")
     
-    # Remove old zip if present
-    if os.path.exists(zip_path):
-        os.remove(zip_path)
+    # Remove old zips if present
+    for z in [primary_zip, legacy_zip]:
+        if os.path.exists(z):
+            os.remove(z)
 
     # Files to include (manifest and root files)
     root_files = [
@@ -30,7 +33,7 @@ def package_extension():
         "utils"
     ]
 
-    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    with zipfile.ZipFile(primary_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
         # Add root files
         for f in root_files:
             file_path = os.path.join(base_dir, f)
@@ -52,8 +55,12 @@ def package_extension():
                         zipf.write(full_path, arcname=arcname)
                         print(f"Added: {arcname}")
 
-    print(f"\n[SUCCESS] Packaged to: {zip_path}")
-    print(f"Archive Size: {round(os.path.getsize(zip_path) / 1024, 2)} KB")
+    # Copy to legacy name for compatibility
+    shutil.copyfile(primary_zip, legacy_zip)
+
+    print(f"\n[SUCCESS] Packaged to: {primary_zip}")
+    print(f"Archive Size: {round(os.path.getsize(primary_zip) / 1024, 2)} KB")
+    print(f"[COMPATIBILITY] Also updated: {legacy_zip}")
 
 if __name__ == "__main__":
     package_extension()

@@ -1,9 +1,9 @@
-# ⏱️ Multi-Platform Social Media & Video Consumption Counter
+# ⏱️ Consumption Counter
 
 <div align="center">
 
 ![Manifest V3](https://img.shields.io/badge/Chrome_Extension-Manifest_V3-4F46E5?style=for-the-badge&logo=googlechrome&logoColor=white)
-![Platforms](https://img.shields.io/badge/Platforms-13_Networks-E11D48?style=for-the-badge&logo=youtube&logoColor=white)
+![Platforms](https://img.shields.io/badge/Platforms-13_Networks-E11D48?style=for-the-badge&logo=googlechrome&logoColor=white)
 ![Design System](https://img.shields.io/badge/Design_System-Grounded_Light-0284C7?style=for-the-badge&logo=figma&logoColor=white)
 ![Zero Trackers](https://img.shields.io/badge/Privacy-100%25_Local_Storage-059669?style=for-the-badge&logo=shield&logoColor=white)
 ![No Dependencies](https://img.shields.io/badge/Core-Vanilla_JS_%26_Canvas-F59E0B?style=for-the-badge&logo=javascript&logoColor=white)
@@ -37,7 +37,7 @@
    └───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Modern web platforms use addictive microcontent algorithms designed to keep you scrolling. **Social Media & Consumption Counter** tracks each platform with custom feature calculation, providing unified doomscroll budgets and deep focus metrics.
+Modern web platforms use addictive microcontent algorithms designed to keep you scrolling. **Consumption Counter** tracks each platform with custom feature calculation, providing unified doomscroll budgets and deep focus metrics.
 
 ---
 
@@ -194,7 +194,7 @@ The design system uses a grounded porcelain light palette with high-contrast fun
 1. Open Google Chrome (or Edge, Brave, Opera, Arc).
 2. Type **`chrome://extensions`** in your address bar.
 3. In the top-right corner, switch **Developer mode** to **ON**.
-4. **Drag and drop** [`youtube-consumption-counter.zip`](youtube-consumption-counter.zip) straight onto the browser window.
+4. **Drag and drop** [`consumption-counter.zip`](consumption-counter.zip) straight onto the browser window.
 5. The extension installs instantly! Pin it to your toolbar.
 
 ### Option B: Load Unpacked Folder
@@ -240,7 +240,7 @@ Consumption counter/
 ├── icons/                     # Crisp PNG icons (16, 32, 48, 128 px, SVG)
 │
 ├── package-extension.py       # POSIX-compliant ZIP packager script
-└── youtube-consumption-counter.zip  # Ready-to-install bundle
+└── consumption-counter.zip    # Ready-to-install bundle
 ```
 
 ---

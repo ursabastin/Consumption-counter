@@ -326,7 +326,7 @@
     }
 
     hudRoot.innerHTML = `
-      <div id="ytcc-hud-container" title="${currentPlatform.name} Consumption Counter - Drag to reposition | Double-click to collapse">
+      <div id="ytcc-hud-container" title="Consumption Counter (${currentPlatform.name}) - Drag to reposition | Double-click to collapse">
         <div class="ytcc-glow-backdrop"></div>
         <div class="ytcc-pulse-dot" id="ytcc-dot"></div>
         <div class="ytcc-current-badge ${isMicrocontent(currentContentType) ? 'shorts' : ''}" id="ytcc-current-badge">

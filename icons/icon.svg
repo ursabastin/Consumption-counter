@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#E11D48" />
+    </linearGradient>
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Grounded Rounded Squircle -->
+  <rect x="0" y="0" width="512" height="512" rx="112.64" fill="url(#brandGrad)" />
+
+  <!-- Stopwatch Top Pusher -->
+  <rect x="220.16" y="51.2" width="71.68" height="35.84" rx="10.24" fill="#FFFFFF" fill-opacity="0.9" />
+
+  <!-- Background Dial Ring -->
+  <circle cx="256" cy="266.24" r="153.6" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="35.84" />
+
+  <!-- Active Counter Progress Arc -->
+  <circle cx="256" cy="266.24" r="153.6" fill="none" stroke="#FFFFFF" stroke-width="43.52"
+    stroke-dasharray="965.0972631827844" stroke-dashoffset="337.7840421139745"
+    stroke-linecap="round" transform="rotate(-90 256 266.24)" filter="url(#subtleGlow)" />
+
+  <!-- Hour Hand (pointing towards 10 o'clock) -->
+  <line x1="256" y1="266.24" x2="176.128" y2="212.48000000000002"
+    stroke="#FFFFFF" stroke-width="35.84" stroke-linecap="round" />
+
+  <!-- Minute Hand (pointing towards 2 o'clock) -->
+  <line x1="256" y1="266.24" x2="345.08799999999997" y2="197.12"
+    stroke="#FFFFFF" stroke-width="35.84" stroke-linecap="round" />
+
+  <!-- Center Pivot Dot -->
+  <circle cx="256" cy="266.24" r="33.28" fill="#FFFFFF" />
+
+  <!-- Live Pulse Dot at corner -->
+  <circle cx="368.64" cy="368.64" r="51.2" fill="#059669" stroke="#FFFFFF" stroke-width="17.92" />
+</svg>
