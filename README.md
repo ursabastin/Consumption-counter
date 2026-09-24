@@ -1,132 +1,248 @@
 # ⏱️ YouTube Consumption Counter & Habit Tracker
 
+<div align="center">
+
+![Manifest V3](https://img.shields.io/badge/Chrome_Extension-Manifest_V3-4F46E5?style=for-the-badge&logo=googlechrome&logoColor=white)
+![Design System](https://img.shields.io/badge/Design_System-Grounded_Light-E11D48?style=for-the-badge&logo=figma&logoColor=white)
+![Zero Trackers](https://img.shields.io/badge/Privacy-100%25_Local_Storage-059669?style=for-the-badge&logo=shield&logoColor=white)
+![No Dependencies](https://img.shields.io/badge/Core-Vanilla_JS_%26_Canvas-0284C7?style=for-the-badge&logo=javascript&logoColor=white)
+
+<br/>
+
+**Transform invisible watch time into visual, mindful balance.**  
+*Track active time on YouTube Videos vs. Shorts, monitor doomscrolling in real time, and reclaim your digital focus.*
+
+---
+
+</div>
+
 > [!NOTE]
-> **Author's Note**: This is just my idea. Everything in this project—including the architecture, code implementation, UI design system, and extension packaging—was done entirely by AI.
-
-A lightweight, privacy-friendly browser extension (Manifest V3) and comprehensive analytics hub built to monitor, quantify, and balance your YouTube consumption habits. It tracks active time spent on **Regular Videos** vs. **YouTube Shorts**, monitors doomscrolling patterns, logs feature usage, and visualizes viewing trends with a grounded, modern light-theme dashboard.
+> **Author's Note**: This is just my idea. Everything in this project—including the architecture, code implementation, UI/UX design system, and extension packaging—was conceived, crafted, and built entirely by AI.
 
 ---
 
-## 🚀 Quick Install (Chrome / Edge / Brave / Opera / Arc)
+## 🎬 The Digital Dilemma: Deep Focus vs. Infinite Scroll
 
-### Method 1: Direct ZIP Install (Fastest)
-1. Open your Chromium browser and go to **`chrome://extensions`** (or `edge://extensions`).
-2. In the top-right corner, toggle **Developer mode** to **ON**.
-3. **Drag and drop** [`youtube-consumption-counter.zip`](youtube-consumption-counter.zip) directly into the `chrome://extensions` window.
-4. The extension installs immediately. Pin it to your browser toolbar!
+```
+  ┌────────────────────────────────────────────────────────────────────────┐
+  │                           THE WATCH PARADOX                            │
+  │                                                                        │
+  │   🎬 LONG-FORM VIDEOS                     ⚡ YOUTUBE SHORTS            │
+  │   Intentional • Deep Dives                Algorithmic • Hyper-stim     │
+  │   Measured in Minutes & Lessons           Measured in Seconds & Skips  │
+  │                                                                        │
+  │       [ 1 hr documentary ]         VS.         [ 85 micro-shorts ]     │
+  │          Clear Intent                             Lost Hours           │
+  └────────────────────────────────────────────────────────────────────────┘
+```
 
-### Method 2: Load Unpacked Folder
-1. Go to **`chrome://extensions`** and ensure **Developer mode** is **ON**.
-2. Click the **Load unpacked** button in the top-left.
-3. Select this folder: `Consumption counter`.
-4. Done!
-
----
-
-## ✨ Features & Capabilities
-
-### 1. 🎬 Regular Videos vs. ⚡ YouTube Shorts Tracking
-* **Active Watch Time**: Measures real playback time using HTML5 video state detection (tab focus, visibility, play/pause state). Paused videos or background tabs do not inflate watch time unless background audio tracking is explicitly enabled.
-* **Smart View Counting**:
-  * Regular videos watched for $\ge 5$ seconds are counted as viewed.
-  * Shorts watched for $\ge 4$ seconds are counted as viewed.
-  * Shorts skipped under 4 seconds are tracked separately under **Shorts Rapid Skips** (doomscroll indicator).
-* **Format Ratio Split**: Visualizes your consumption ratio between deep, long-form content vs. short-form video.
-
-### 2. 🧭 Feature Usage Metrics
-* **Search Queries**: Automatically counts search queries executed on YouTube.
-* **Home & Feed Browsing**: Measures time spent scrolling the homepage, subscriptions feed, and channel pages without an active video.
-* **Comment Engagements**: Tracks comment writing and interactions.
-
-### 3. 🎯 Floating Draggable On-Page HUD
-* Injected directly into YouTube pages as an unobtrusive, grounded capsule.
-* Displays live item duration and today's accumulated totals.
-* **Draggable**: Drag the floating pill anywhere on your screen (position is remembered across sessions).
-* **Persistent**: Does not have a close button on the HUD itself to prevent accidental dismissal; it stays active while on YouTube until toggled off in settings or removed from the extensions page.
-* **Minimizable**: Double-click or click the minimize button to collapse into a compact badge.
-
-### 4. 📊 Bento-Grid Toolbar Popup (`popup.html`)
-Click the extension icon in your toolbar to view:
-* Today's active watch time with a mindful status badge.
-* Side-by-side comparison cards for Videos and Shorts with average durations.
-* Precision-segmented format ratio track.
-* Shorts daily budget progress bar with warning indicators.
-* Fast toggle for the floating HUD overlay.
-* One-click button to launch the full analytics dashboard.
-
-### 5. 📈 Fullscreen Analytics Hub (`dashboard.html`)
-Open via the extension popup, right-clicking the extension icon -> **Options**, or opening `dashboard.html` directly in your browser:
-* **Time Range Filtering**: Filter metrics by **Today**, **Last 7 Days**, **Last 30 Days**, or **All Time**.
-* **Interactive Canvas Charts**:
-  * **Daily Consumption Trend**: Stacked bar chart showing Videos vs. Shorts watch time across days.
-  * **Feature Split Donut**: Breakdown of Videos, Shorts, and Feed Browsing.
-  * **24-Hour Profile**: Visualizes peak watch hours throughout the day.
-  * **Mindful Habits Wellness Gauge**: Speedometer showing % of daily shorts budget used.
-  * **Session Duration Distribution**: Bins your sittings into `< 1m`, `1-5m`, `5-15m`, `15-30m`, and `> 30m`.
-* **Searchable Watch History Log**:
-  * Filter and search watched items with format badges (🎬 / ⚡), channel names, durations, and direct YouTube links.
-  * **Export to CSV**: Export your watch history into an Excel/Google Sheets compatible spreadsheet.
-* **Google Takeout Importer**:
-  * Drag and drop `watch-history.json` or `watch-history.html` from Google Takeout to parse and quantify historical viewing archives over months or years.
-* **Backup & Restore**:
-  * Download full database backups as JSON or restore anytime.
-* **⚡ Sample Data Generator**:
-  * Click **"Load Sample Data"** in the sidebar to populate 30 days of realistic watch patterns and preview all visualizations immediately.
+YouTube's interface treats all consumption the same. **YouTube Consumption Counter** separates the signal from the noise—distinguishing high-intent long-form viewing from passive short-form bingeing with sub-second accuracy.
 
 ---
 
-## 🎨 UI Design System & Grounded Light Theme
+## 🖥️ The UI / UX Experience
 
-The interface utilizes a **grounded white light design system**:
-* **Canvas / Grounding**: Crisp off-white `#F8FAFC` and pure porcelain white `#FFFFFF`.
-* **Card Surfaces**: Pure white cards with subtle, elevated drop-shadows (`0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 25px -5px rgba(0, 0, 0, 0.04)`) and fine `#E2E8F0` borders.
-* **Typography**: Deep carbon slate `#0F172A` for primary metrics/headings, `#334155` for body text, and `#64748B` for secondary labels.
-* **Videos Accent**: Grounded Royal Indigo (`#4F46E5` / `#4338CA`) on soft `#EEF2FF`.
-* **Shorts Accent**: Vibrant Crimson Rose (`#E11D48`) on soft `#FFE4E6`.
-* **Tabular Numerals**: Built using monospace numerical tracking (`font-variant-numeric: tabular-nums`) so timer numbers remain steady and never jitter.
+Designed around a **Grounded Light Design System**, the interface prioritizes high contrast, crisp porcelain surfaces, and monospace tabular numerals to eliminate visual clutter.
+
+```
+                                 THE 3 SURFACES
+                                 
+      ┌────────────────┐      ┌─────────────────┐      ┌──────────────────┐
+      │   SURFACE 1    │      │    SURFACE 2    │      │    SURFACE 3     │
+      │  FLOATING HUD  │ ───► │  TOOLBAR POPUP  │ ───► │ ANALYTICS HUB    │
+      │   (On-Page)    │      │  (Quick Glance) │      │  (Full Command)  │
+      └────────────────┘      └─────────────────┘      └──────────────────┘
+```
 
 ---
 
-## 📁 Repository Structure
+### 1. 🎯 The Dynamic Capsule (Floating On-Page HUD)
+
+A discreet, draggable glassmorphic pill that stays anchored directly on YouTube pages while you watch.
+
+```
+ ┌────────────────────────────────────────────────────────────────────────────┐
+ │  🟢  [ 🎬 04:32 ]   VIDEOS 4 (48m)   │   SHORTS 16 (14m)   [ ⊞ ]  [ ⤢ ]   │
+ └────────────────────────────────────────────────────────────────────────────┘
+     ▲         ▲             ▲                     ▲            ▲      ▲
+   Status   Live Item     Long-Form            Short-Form      Open  Collapse
+   Pulse      Timer        Totals                Totals        Dash    Pill
+```
+
+* **Zero Distraction**: Double-click or click `[ ⤢ ]` to collapse into a micro status dot.
+* **Persistent Accountability**: No close button (`×`) on the page—stays active until toggled off in settings or uninstalled.
+* **Draggable Anywhere**: Reposition to any corner; coordinates persist across page navigations.
+* **Smart Detection**: Stops counting automatically when video is paused or the tab loses focus.
+
+---
+
+### 2. 📊 The Bento-Grid Toolbar Menu (`popup.html`)
+
+A modern Bento-box popup accessible directly from your browser toolbar.
+
+```
+ ┌──────────────────────────────────────────────┐
+ │  (▶) YT COUNTER             ● MONITORING  ⊞  │
+ ├──────────────────────────────────────────────┤
+ │  TODAY'S ACTIVE WATCH TIME          MINDFUL  │
+ │  1h 24m 18s                                  │
+ ├──────────────────────┬───────────────────────┤
+ │  🎬 VIDEOS       [5] │  ⚡ SHORTS       [24] │
+ │  58m                 │  26m                  │
+ │  Avg 11m / video     │  Avg 65s / short      │
+ ├──────────────────────┴───────────────────────┤
+ │  FORMAT SPLIT           69% Videos • 31% S   │
+ │  [█████████████████████████░░░░░░░░░░░░]     │
+ ├──────────────────────────────────────────────┤
+ │  ⏱️ SHORTS DAILY BUDGET               26m/25m │
+ │  [████████████████████████████████████] ⚠️   │
+ ├──────────────┬───────────────┬───────────────┤
+ │  ⏭️  42      │  🔍  7        │  🧭  12m      │
+ │    Skips     │    Searches   │     Browse    │
+ ├──────────────┴───────────────┴───────────────┤
+ │  Floating HUD on YouTube              [ ON ] │
+ ├──────────────────────────────────────────────┤
+ │  [      OPEN DETAILED ANALYTICS HUB  ➔     ] │
+ └──────────────────────────────────────────────┘
+```
+
+---
+
+### 3. 📈 The Fullscreen Analytics Hub (`dashboard.html`)
+
+A full-fledged analytical command center running locally in your browser.
+
+```
+┌──────────────┬──────────────────────────────────────────────────────────────┐
+│  YT COUNTER  │  CONSUMPTION OVERVIEW             [Today][7D][30D][All] 💾 ↗ │
+├──────────────┼──────────────────────────────────────────────────────────────┤
+│  ⊞ Overview  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────┐ │
+│  📈 Trends   │  │ TOTAL TIME   │ │ VIDEOS       │ │ SHORTS       │ │RATIO │ │
+│  📋 History  │  │ 2h 45m       │ │ 1h 55m       │ │ 50m          │ │70/30 │ │
+│  📥 Takeout  │  └──────────────┘ └──────────────┘ └──────────────┘ └──────┘ │
+│  ⚙️ Settings │                                                              │
+│              │  ┌───────────────────────────────┐ ┌───────────────────────┐ │
+│              │  │ DAILY CONSUMPTION (STACKED)   │ │ FORMAT DONUT          │ │
+│              │  │  m                            │ │        ╭───╮          │ │
+│              │  │ 90|        ▄█   █             │ │       │ 70% │  Videos │ │
+│              │  │ 60|   █    ██   █             │ │        ╰───╯   Shorts │ │
+│              │  │ 30|   █    ██   █             │ │                Browse │ │
+│              │  │  0└───┴────┴────┴───────────  │ └───────────────────────┘ │
+│              │  └───────────────────────────────┘                           │
+│  ──────────  │  ┌───────────────────────────────┐ ┌───────────────────────┐ │
+│  ● Monitored │  │ 24-HOUR ACTIVITY PROFILE      │ │ MINDFUL HABIT CHECK   │ │
+│  Ready       │  │ Peak viewing: 8 PM - 10 PM    │ │ [=======·····] 65%    │ │
+│  [⚡ Sample] │  └───────────────────────────────┘ └───────────────────────┘ │
+└──────────────┴──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🎨 Color System & Visual Identity
+
+The design system uses a grounded porcelain light palette with high-contrast functional accents:
+
+| Token | Hex | Role | Visual Preview |
+|:---|:---:|:---|:---:|
+| **App Canvas** | `#F8FAFC` | Grounding & page background | ![#F8FAFC](https://placehold.co/18x18/F8FAFC/F8FAFC.png) |
+| **Card Surface** | `#FFFFFF` | Elevated Bento card containers | ![#FFFFFF](https://placehold.co/18x18/FFFFFF/FFFFFF.png) |
+| **Deep Carbon** | `#0F172A` | High-contrast headings & tabular digits | ![#0F172A](https://placehold.co/18x18/0F172A/0F172A.png) |
+| **Grounded Indigo** | `#4F46E5` | Regular Videos & deep focus actions | ![#4F46E5](https://placehold.co/18x18/4F46E5/4F46E5.png) |
+| **Crimson Rose** | `#E11D48` | YouTube Shorts & doomscroll budget | ![#E11D48](https://placehold.co/18x18/E11D48/E11D48.png) |
+| **Emerald Mint** | `#059669` | Mindful status & positive wellness | ![#059669](https://placehold.co/18x18/059669/059669.png) |
+| **Warm Amber** | `#D97706` | Approaching budget limit alert | ![#D97706](https://placehold.co/18x18/D97706/D97706.png) |
+
+---
+
+## ⚡ Feature Matrix
+
+| Feature | Regular Video (🎬) | YouTube Shorts (⚡) | Home & Feeds (🧭) |
+|:---|:---:|:---:|:---:|
+| **Playback Qualification** | Active $\ge 5\text{s}$ | Active $\ge 4\text{s}$ | In-view scrolling |
+| **Rapid Skip Tracking** | — | Skipped $< 4\text{s}$ | — |
+| **Timer Precision** | 1000ms active tick | 1000ms active tick | 5000ms idle tick |
+| **Tab Visibility Check** | Strict focus check | Strict focus check | Tab visible |
+| **Audio-only Backgrounding** | Optional toggle | Optional toggle | — |
+| **History Logging** | Title, Channel, Link | Title, Channel, Link | Timestamped duration |
+
+---
+
+## 🚀 Installation & Quick Start
+
+```
+                               3-STEP FAST SETUP
+                               
+    [ Step 1: Open ]           [ Step 2: Toggle ]           [ Step 3: Drop ]
+   chrome://extensions        Developer Mode (ON)         Drop ZIP directly
+```
+
+### Option A: Direct Drag & Drop ZIP (No Unzipping Needed)
+1. Open Google Chrome (or Edge, Brave, Opera, Arc).
+2. Type **`chrome://extensions`** in your address bar.
+3. In the top-right corner, switch **Developer mode** to **ON**.
+4. **Drag and drop** [`youtube-consumption-counter.zip`](youtube-consumption-counter.zip) straight onto the browser window.
+5. The extension installs instantly! Pin it to your toolbar.
+
+### Option B: Load Unpacked Folder
+1. Go to `chrome://extensions` with **Developer mode** enabled.
+2. Click **"Load unpacked"** in the top-left.
+3. Choose the root folder: `Consumption counter`.
+
+---
+
+## 📥 Data Privacy & Portability
+
+* **100% Local Storage**: Your watch metrics never leave your computer. Zero external API calls, zero telemetry.
+* **Google Takeout Importer**: Drag and drop your Google Takeout `watch-history.json` or `.html` to quantify years of past viewing history into instant visual analytics.
+* **CSV Export**: Export your complete watch history into a clean `.csv` for Excel, Notion, or Google Sheets.
+* **JSON Backup & Restore**: Full snapshots with one-click restoration.
+* **Instant Demo Mode**: Click **"⚡ Load Sample Data"** in the dashboard to immediately test all charts and features with 30 days of synthetic data.
+
+---
+
+## 🏗️ Technical Architecture
+
+Built purely with vanilla web standards for speed, security, and battery efficiency:
 
 ```text
 Consumption counter/
+│
 ├── manifest.json              # Chrome Manifest V3 configuration
-├── background.js              # Service worker (alarms, badge updates, limits)
+├── background.js              # Service worker (alarms, badge indicators, limits)
 ├── content.js                 # Injected YouTube tracker & draggable HUD
 ├── content.css                # Grounded light theme HUD styles
-├── popup.html                 # Extension toolbar popup layout
-├── popup.css                  # Grounded light theme popup styling
-├── popup.js                   # Popup live refresh & controls
+│
+├── popup.html                 # Bento-grid toolbar popup interface
+├── popup.css                  # Popup light theme styling
+├── popup.js                   # Live refresh engine & controls
+│
 ├── dashboard.html             # Fullscreen analytics dashboard
-├── dashboard.css              # Grounded light theme dashboard stylesheet
+├── dashboard.css              # Dashboard stylesheet & responsive grid
 ├── dashboard.js               # Canvas chart engines, filters & Takeout parser
 ├── index.html                 # Standalone web entry point
-├── package-extension.py       # POSIX-compliant ZIP packager script
-├── package-extension.ps1      # PowerShell wrapper for packager
-├── generate-png-icons.ps1     # Icon generator script
-├── youtube-consumption-counter.zip  # Pre-packaged extension ready to install
+│
 ├── utils/
-│   └── storage.js             # Unified storage & calculation engine
-└── icons/                     # Extension icons (16, 32, 48, 128 px, SVG)
+│   └── storage.js             # Unified storage, formatting & aggregation
+├── icons/                     # Crisp PNG icons (16, 32, 48, 128 px, SVG)
+│
+├── package-extension.py       # POSIX-compliant ZIP packager script
+└── youtube-consumption-counter.zip  # Ready-to-install bundle
 ```
 
 ---
 
-## ⚙️ Settings & Customization
-Under the **Limits & Settings** tab in the dashboard:
-* **Daily Shorts Time Limit**: Default 25 mins (notifies you when reached).
-* **Daily Total YouTube Limit**: Default 120 mins.
-* **Break Reminder Frequency**: Prompts for mindful pauses every 30 mins.
-* **Floating HUD Toggle**: Turn on/off on YouTube pages.
-* **Track Background Audio**: Optional setting to count time even when YouTube tab is in the background.
+## 🛠️ Modifying & Re-packaging
 
----
-
-## 🛠️ Building & Packaging
-
-To re-package the extension after making any modifications:
+If you edit any code, re-build the ZIP bundle in one command:
 ```bash
 python package-extension.py
 ```
-This automatically bundles all necessary files with standard POSIX forward-slash headers into `youtube-consumption-counter.zip`.
+This packages the archive using strict POSIX forward-slash headers for Chromium compliance.
+
+---
+
+<div align="center">
+
+*Empowering intentional, mindful content consumption.*
+
+</div>
